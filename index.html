@@ -76,10 +76,26 @@ tr.ed{display:block;background-image:linear-gradient(rgba(59,130,246,.2),rgba(59
 .pager button{flex:1}
 }
 #info,#stats{display:none}#panel:not([hidden]){position:fixed;inset:0;z-index:40;margin:0;border:0;border-radius:0;background:var(--bg);overflow:auto;padding:0 14px calc(14px + env(safe-area-inset-bottom,0px))}#panel>*{max-width:760px;margin-left:auto;margin-right:auto}#panel .ph{position:sticky;top:0;z-index:2;background:var(--bg);align-items:center;margin-bottom:6px;padding:calc(12px + env(safe-area-inset-top,0px)) 0 12px;border-bottom:1px solid var(--line);font-size:17px}.cnt{display:inline-block;min-width:18px;padding:0 6px;margin-left:4px;border-radius:999px;background:var(--wa);color:#fff;font-size:12px;font-weight:700;text-align:center}.cnt[hidden]{display:none}#wm{display:inline-flex;align-items:center;gap:6px;background:var(--wa);color:#fff;border-color:var(--wa);font-weight:600}#wm[aria-pressed=true]{filter:brightness(.85)}#wm .cnt{background:#fff;color:#178f4c;margin-left:0}.wrap{position:relative}header{padding-right:52px}#th{position:absolute;top:16px;right:16px;height:40px}@media(max-width:700px){#th{top:12px;right:12px}}.pulse{animation:pl .5s}@keyframes pl{50%{transform:scale(1.12)}}.wasent{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:600}#th{display:inline-flex;align-items:center;justify-content:center;width:40px;padding:0}#me{background:#d92d20;color:#fff;border-color:#d92d20;font-weight:600}#me:hover{filter:brightness(.92)}.by{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px;background:var(--hl);color:var(--ink);border:1px solid var(--line);margin-left:4px}.pick{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px));overflow:auto}.pick[hidden]{display:none}.pk-list[hidden]{display:none}.pk-pin{display:grid;gap:12px;justify-items:center;width:min(280px,100%)}.pk-pin[hidden]{display:none}.pk-pin input{width:100%;text-align:center;font-size:22px;letter-spacing:.3em}.pk-pin input::placeholder{font-size:14px;letter-spacing:0}#pkmsg{min-height:1.3em;color:var(--warn);text-align:center;font-size:13px}.pick h2{margin:0;font-size:28px;text-align:center}.pk-list{display:flex;flex-wrap:wrap;gap:20px;justify-content:center}.pk-b{display:grid;gap:10px;justify-items:center;border:0;background:none;padding:6px;font-size:16px;font-weight:600;color:var(--mut)}.pk-av{width:104px;height:104px;border-radius:12px;display:grid;place-items:center;font-size:44px;font-weight:700;color:#fff;border:3px solid transparent}.pk-b:hover,.pk-b:focus-visible{color:var(--ink)}.pk-b:hover .pk-av,.pk-b:focus-visible .pk-av{border-color:var(--ink)}#me[hidden]{display:none}@media(max-width:700px){.pk-av{width:84px;height:84px;font-size:36px}.pick h2{font-size:22px}}
+
+#ldr{position:fixed;inset:0;z-index:45;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px));transition:opacity .45s ease,visibility .45s}
+#ldr.done{opacity:0;visibility:hidden;pointer-events:none}
+.ld-box{display:grid;justify-items:center;gap:18px;text-align:center;width:min(320px,100%)}
+.ld-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:132px;padding:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 28px rgba(15,92,77,.18);animation:ldfloat 2.4s ease-in-out infinite}
+.ld-grid i{display:block;height:14px;border-radius:4px;background:var(--hl);animation:ldcell 1.6s ease-in-out infinite;animation-delay:calc(var(--d)*.1s)}
+.ld-grid i.h{background:var(--acc);opacity:.9;animation:none}
+@keyframes ldcell{0%,100%{background:var(--hl);transform:scale(1)}45%{background:var(--acc);transform:scale(1.08)}}
+@keyframes ldfloat{50%{transform:translateY(-6px)}}
+.ld-t{margin:0;font-size:20px;font-weight:700}
+.ld-s{margin:0;color:var(--mut);font-size:14px;min-height:1.4em;transition:opacity .25s}
+.ld-bar{position:relative;width:100%;height:5px;border-radius:999px;background:var(--line);overflow:hidden}
+.ld-bar::after{content:"";position:absolute;top:0;bottom:0;width:40%;border-radius:999px;background:linear-gradient(90deg,transparent,var(--acc),transparent);background-color:var(--acc);animation:ldbar 1.3s ease-in-out infinite}
+@keyframes ldbar{from{left:-40%}to{left:100%}}
+@media(prefers-reduced-motion:reduce){.ld-grid,.ld-grid i,.ld-bar::after{animation:none}.ld-bar::after{left:0;width:100%;opacity:.5}}
 </style>
 <script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}</script>
 </head>
 <body>
+<div id="ldr" role="status" aria-live="polite"><div class="ld-box"><div class="ld-grid" aria-hidden="true"><i class="h"></i><i class="h"></i><i class="h"></i><i class="h"></i><i style="--d:1"></i><i style="--d:2"></i><i style="--d:3"></i><i style="--d:4"></i><i style="--d:2"></i><i style="--d:3"></i><i style="--d:4"></i><i style="--d:5"></i><i style="--d:3"></i><i style="--d:4"></i><i style="--d:5"></i><i style="--d:6"></i><i style="--d:4"></i><i style="--d:5"></i><i style="--d:6"></i><i style="--d:7"></i></div><h2 class="ld-t">Memuat data gudang</h2><p class="ld-s" id="lds">Menghubungi Google Sheet...</p><div class="ld-bar" aria-hidden="true"></div></div></div>
 <div class="pick" id="pick" role="dialog" aria-modal="true" aria-labelledby="pick-t" hidden><h2 id="pick-t">Siapa yang mengakses?</h2><div class="pk-list"></div><div class="pk-pin" id="pkpin" hidden><div class="pk-av" id="pkav"></div><input id="pin1" type="password" inputmode="numeric" autocomplete="off" maxlength="6" aria-label="PIN"><input id="pin2" type="password" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="Ulangi PIN" aria-label="Ulangi PIN" hidden><div class="act"><button class="primary" id="pkok">Masuk</button><button id="pkback">Kembali</button></div></div><div id="pkmsg" role="status"></div></div>
 <div class="wrap">
 <header>
@@ -436,11 +452,14 @@ function thIcon(){$('#th').innerHTML=isDark()?ICO.sun:ICO.moon}
 $('#th').onclick=()=>{const n=isDark()?'light':'dark';document.documentElement.dataset.theme=n;try{localStorage.setItem('theme',n)}catch(x){}thIcon()};
 thIcon();
 showMe();if(!me)openPick();
-$('#tb').innerHTML='<tr><td colspan="12">Memuat data dari Google Sheet...</td></tr>';
+$('#tb').innerHTML='';
+const ldMsgs=['Menghubungi Google Sheet...','Membaca data outstanding...','Menyusun daftar barang...','Hampir selesai...'];
+let ldI=0;const ldT=setInterval(()=>{const e=$('#lds');if(!e)return;ldI=Math.min(ldI+1,ldMsgs.length-1);e.style.opacity=0;setTimeout(()=>{e.textContent=ldMsgs[ldI];e.style.opacity=1},200)},1800);
+function hideLdr(){clearInterval(ldT);const l=$('#ldr');if(!l)return;l.classList.add('done');setTimeout(()=>l.remove(),600)}
 (async()=>{
   await mcpReady;
-  if(!mcp){$('#msg').textContent='Halaman ini harus dibuka lewat claude.ai dengan akun yang punya konektor Google Sheets agar bisa membaca Sheet.';$('#tb').innerHTML='';return}
-  await refresh();
+  if(!mcp){hideLdr();$('#msg').textContent='Halaman ini harus dibuka lewat claude.ai dengan akun yang punya konektor Google Sheets agar bisa membaca Sheet.';$('#tb').innerHTML='';return}
+  await refresh();hideLdr();
   lastRev=await getRev();setInterval(tick,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
 })();
 </script>
