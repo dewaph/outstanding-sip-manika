@@ -231,7 +231,7 @@ function stgHtml(r){
 const vst=r=>r.stg||(r.jml!==null?[{tgl:isoRe.test(r.dtg||'')?r.dtg:'',jml:r.jml}]:[]);
 function editor(r){
   const full=r.sisa!==null&&r.sisa<=0,mx=r.qty===null?'':Math.max(0,rnd(r.qty-r.cur));
-  const rvb=vst(r).length>1?`<button data-rv="${r.id}">Hapus semua input</button>`:'';
+  const rvb=(vst(r).length>1||(full&&r.jml!==null))?`<button data-rv="${r.id}">Hapus semua input</button>`:'';
   const sl=vst(r).map((s,i)=>`<div class="st"><span>Tahap ${i+1}:</span>${s.by?`<span class="by">${esc(s.by)}</span>`:''}<input type="date" class="s-t" value="${esc(s.tgl)}" aria-label="Tanggal tahap ${i+1}"><input type="number" class="s-j" min="0" step="any" value="${esc(s.jml)}" aria-label="Jumlah tahap ${i+1}"><span>${esc(r.sat)}</span><button class="sm primary" data-ss="${r.id}:${i}">Simpan</button><button class="sm" data-dt="${r.id}:${i}">Hapus</button></div>`).join('');
   return `<tr class="ed"><td colspan="12">${sl}${full?'<div class="note">Pesanan sudah lengkap, tidak ada sisa.</div><button data-cx="1">Tutup</button>'+rvb:''}<div class="edf"${full?' hidden':''}><span class="note">Diinput oleh <b>${esc(me)}</b></span><label>Tanggal datang tahap ${vst(r).length+1}<input type="date" id="e-t" value="${todayIso()}"></label><label>Jumlah datang (${esc(r.sat)})<input type="number" id="e-j" min="0" max="${mx}" step="any" value="${esc(r.sisa>0?r.sisa:'')}" inputmode="decimal"></label><button class="primary" data-sv="${r.id}">Simpan</button><button data-cx="1">Batal</button>${full?'':rvb}</div><div class="note" id="e-m" style="color:var(--warn)"></div></td></tr>`;
 }
@@ -299,7 +299,7 @@ async function delStage(k){
 }
 async function remove(id){
   const r=R.get(id);
-  try{await writeRow(r,[],r.base)}catch(e){return em(errMsg(e))}
+  try{await writeRow(r,[],r.stg?r.base:0)}catch(e){return em(errMsg(e))}
   sel.delete(id);editing=null;apply(true);renderPanel();
 }
 $('#tb').addEventListener('click',e=>{
