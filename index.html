@@ -69,7 +69,7 @@ td[data-label]::before{content:attr(data-label);display:block;font-size:11px;col
 td:empty{display:none}
 td:nth-child(12){order:-2;grid-column:1/-1}
 td:nth-child(4){order:-1;grid-column:1/-1;font-weight:600;font-size:16px}
-td:nth-child(7){grid-column:1/-1}
+td:nth-child(7){grid-column:1/-1;order:8}
 td.ac{order:9;grid-column:1/-1;display:flex;gap:8px;white-space:normal}td.ac .sm{flex:1;min-height:42px}
 tr.ed{display:block;background-image:linear-gradient(rgba(59,130,246,.2),rgba(59,130,246,.2));margin-top:-6px;border-color:var(--acc)}
 .edf label,.edf input{width:100%}.st input{flex:1 1 90px}
@@ -91,6 +91,16 @@ tr.ed{display:block;background-image:linear-gradient(rgba(59,130,246,.2),rgba(59
 .ld-bar::after{content:"";position:absolute;top:0;bottom:0;width:40%;border-radius:999px;background:linear-gradient(90deg,transparent,var(--acc),transparent);background-color:var(--acc);animation:ldbar 1.3s ease-in-out infinite}
 @keyframes ldbar{from{left:-40%}to{left:100%}}
 @media(prefers-reduced-motion:reduce){.ld-grid,.ld-grid i,.ld-bar::after{animation:none}.ld-bar::after{left:0;width:100%;opacity:.5}}
+#dm{display:inline-flex;align-items:center;gap:6px;background:#2563eb;color:#fff;border-color:#2563eb;font-weight:600}#dm[aria-pressed=true]{filter:brightness(.85)}#dm .cnt{background:#fff;color:#2563eb}
+#dmp:not([hidden]){position:fixed;inset:0;z-index:41;margin:0;border:0;border-radius:0;background:var(--bg);overflow:auto;padding:0 14px calc(14px + env(safe-area-inset-bottom,0px))}#dmp>*{max-width:760px;margin-left:auto;margin-right:auto}#dmp .ph{position:sticky;top:0;z-index:2;background:var(--bg);align-items:center;margin-bottom:6px;padding:calc(12px + env(safe-area-inset-top,0px)) 0 12px;border-bottom:1px solid var(--line);font-size:17px}
+#dmp .dmf{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}#dmp #dmq{flex:1 1 100%;font-size:16px;padding:10px}#dmp .dmmod{position:fixed;inset:0;z-index:60;max-width:none;margin:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px}#dmp .dmbox{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:18px;width:min(380px,100%);display:grid;gap:12px;box-shadow:0 18px 50px rgba(0,0,0,.45)}#dmp .dmbox h3{margin:0;font-size:18px}#dmp .dmbox label{display:grid;gap:6px;font-size:13px;color:var(--mut)}#dmp .dmbox input{font-size:20px;padding:12px;text-align:center;letter-spacing:.04em}#dmp .dmbox .note{min-height:0}#dmp .dmbb button{min-height:46px;font-size:15px}#dmp .dmtp{background:var(--hl);color:var(--ink);border-color:var(--acc)}#dmp .dmbb{display:flex;gap:8px}#dmp .dmbb button{flex:1}#dmp #dmsel{flex:1;font-size:16px;padding:10px}
+#dmp .dmtabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px auto 14px;padding:4px;background:var(--hl);border-radius:12px}#dmp .dmtabs button{border:0;background:none;padding:10px 6px;font-weight:600;font-size:15px;border-radius:9px;color:var(--mut)}#dmp .dmtabs button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+#dmp>.note{font-size:15px;text-align:center;padding:28px 8px}
+#dmp .grp{border-top:0;padding:0;margin-bottom:18px}#dmp .gh{padding:6px 2px 8px}#dmp .gh h3{font-size:18px}
+#dmp .dmc{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:12px;padding:12px 14px;margin-bottom:12px}#dmp .dmc.out{border-left-color:var(--mut)}
+#dmp .dmh{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}#dmp .dmn{flex:none;min-width:26px;height:26px;border-radius:50%;background:var(--acc);color:var(--accink);font-weight:700;font-size:13px;display:grid;place-items:center}#dmp .dmnm{font-size:17px;font-weight:700;line-height:1.3;overflow-wrap:anywhere}
+#dmp .dmk{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:10px}#dmp .dmk small{display:block;font-size:12px;color:var(--mut);margin-bottom:2px}#dmp .dmk strong{font-size:16px}
+#dmp .dmx{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:14px;color:var(--mut);margin-bottom:10px}#dmp .dmb button{width:100%;min-height:44px;font-size:15px}
 </style>
 <script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}</script>
 </head>
@@ -100,10 +110,11 @@ tr.ed{display:block;background-image:linear-gradient(rgba(59,130,246,.2),rgba(59
 <div class="wrap">
 <header>
   <div><h1>Outstanding SIP 2026</h1><div class="sub" id="info"></div></div>
-  <div class="hact"><button class="sm" id="wm" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>Pesan WA <span class="cnt" id="wc" hidden>0</span></button><button class="sm" id="th" type="button" aria-label="Ganti mode terang atau gelap"></button><button class="sm" id="me" hidden></button><span class="sub" id="upd"></span></div>
+  <div class="hact"><button class="sm" id="wm" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>Pesan WA <span class="cnt" id="wc" hidden>0</span></button><button class="sm" id="dm" type="button" aria-pressed="false">Daftar material <span class="cnt" id="dc" hidden>0</span></button><button class="sm" id="th" type="button" aria-label="Ganti mode terang atau gelap"></button><button class="sm" id="me" hidden></button><span class="sub" id="upd"></span></div>
 </header>
 <div id="msg" role="status"></div>
 <section id="panel" class="card" hidden></section>
+<section id="dmp" class="card" hidden></section>
 <div class="filters">
   <input id="q" type="search" placeholder="Cari barang, no. SPK, no. SIP, pemesan" aria-label="Cari">
   <select id="pem" aria-label="Pemesan"></select>
@@ -195,7 +206,7 @@ async function refresh(){
     $('#msg').textContent='';
     $('#info').textContent='Sumber data: Google Sheet OUTSTANDING MANIKA SIP 2026 - '+rows.length.toLocaleString('id-ID')+' baris';
     const t=new Date();$('#upd').textContent='Diperbarui '+p2(t.getHours())+':'+p2(t.getMinutes());
-    apply(true);renderPanel();
+    apply(true);renderPanel();if(dmOpen&&dmAsk===null&&!(document.activeElement&&document.activeElement.id==='dmq'))renderDm();updDc();
   }catch(e){$('#msg').textContent=errMsg(e)}
   finally{busy=false}
 }
@@ -220,7 +231,7 @@ function apply(keep){
 const LBL={belum:'Belum datang',sebagian:'Sebagian',selesai:'Sudah datang'};
 function act(r){
   const w=r.jml!==null?(isSent(r)?`<button class="sm wasent" data-wa="${r.id}" title="Dikirim oleh ${esc((waSent.get(r.id)||{}).by||'')}">Pesan WA sudah dikirim</button> `:`<button class="sm wa" data-wa="${r.id}">Kirim WA</button> `):'';
-  if(r.jml!==null)return w+`<button class="sm" data-ed="${r.id}">Ubah</button>`;
+  if(r.jml!==null)return w+`<button class="sm" data-ed="${r.id}">Tambah / Hapus</button>`;
   return `<button class="sm primary" data-ed="${r.id}">Input</button>`;
 }
 function stgHtml(r){
@@ -232,7 +243,7 @@ const vst=r=>r.stg||(r.jml!==null?[{tgl:isoRe.test(r.dtg||'')?r.dtg:'',jml:r.jml
 function editor(r){
   const full=r.sisa!==null&&r.sisa<=0,mx=r.qty===null?'':Math.max(0,rnd(r.qty-r.cur));
   const rvb=(vst(r).length>1||(full&&r.jml!==null))?`<button data-rv="${r.id}">Hapus semua input</button>`:'';
-  const sl=vst(r).map((s,i)=>`<div class="st"><span>Tahap ${i+1}:</span>${s.by?`<span class="by">${esc(s.by)}</span>`:''}<input type="date" class="s-t" value="${esc(s.tgl)}" aria-label="Tanggal tahap ${i+1}"><input type="number" class="s-j" min="0" step="any" value="${esc(s.jml)}" aria-label="Jumlah tahap ${i+1}"><span>${esc(r.sat)}</span><button class="sm primary" data-ss="${r.id}:${i}">Simpan</button><button class="sm" data-dt="${r.id}:${i}">Hapus</button></div>`).join('');
+  const sl=vst(r).map((s,i)=>`<div class="st"><span>Tahap ${i+1}:</span>${s.by?`<span class="by">${esc(s.by)}</span>`:''}<b>${esc(fmtD(s.tgl))||'-'}</b><b>${esc(s.jml)} ${esc(r.sat)}</b><button class="sm" data-dt="${r.id}:${i}">Hapus</button></div>`).join('');
   return `<tr class="ed"><td colspan="12">${sl}${full?'<div class="note">Pesanan sudah lengkap, tidak ada sisa.</div><button data-cx="1">Tutup</button>'+rvb:''}<div class="edf"${full?' hidden':''}><span class="note">Diinput oleh <b>${esc(me)}</b></span><label>Tanggal datang tahap ${vst(r).length+1}<input type="date" id="e-t" value="${todayIso()}"></label><label>Jumlah datang (${esc(r.sat)})<input type="number" id="e-j" min="0" max="${mx}" step="any" value="${esc(r.sisa>0?r.sisa:'')}" inputmode="decimal"></label><button class="primary" data-sv="${r.id}">Simpan</button><button data-cx="1">Batal</button>${full?'':rvb}</div><div class="note" id="e-m" style="color:var(--warn)"></div></td></tr>`;
 }
 function renderTable(){
@@ -276,7 +287,7 @@ async function save(id){
   const stages=st0.concat({tgl,jml:add,by:me}).sort((a,b)=>a.tgl<b.tgl?-1:a.tgl>b.tgl?1:0);
   $('#e-m').textContent='Menyimpan ke Sheet...';
   try{await writeRow(r,stages,base)}catch(e){return em(errMsg(e))}
-  editing=null;apply(true);addSel(id);
+  editing=null;dmAdd(id,tgl,add);apply(true);addSel(id);
 }
 const num2=v=>(v===''||isNaN(Number(v)))?null:Number(v);
 async function editStage(k,btn){
@@ -295,12 +306,12 @@ async function editStage(k,btn){
 async function delStage(k){
   const [id,i]=k.split(':').map(Number),r=R.get(id);if(!r)return;const vs=vst(r);if(!vs.length)return;
   try{await writeRow(r,vs.filter((_,x)=>x!==i),r.stg?r.base:0)}catch(e){return em(errMsg(e))}
-  apply(true);renderPanel();
+  if(vs.length<=1)dmDrop(id);apply(true);renderPanel();
 }
 async function remove(id){
   const r=R.get(id);
   try{await writeRow(r,[],r.stg?r.base:0)}catch(e){return em(errMsg(e))}
-  sel.delete(id);editing=null;apply(true);renderPanel();
+  sel.delete(id);dmDrop(id);editing=null;apply(true);renderPanel();
 }
 $('#tb').addEventListener('click',e=>{
   const t=e.target.closest('button');if(!t)return;const d=t.dataset;
@@ -310,7 +321,7 @@ $('#tb').addEventListener('click',e=>{
   else if(d.sv!==undefined)save(+d.sv);
   else if(d.rv!==undefined)remove(+d.rv);
   else if(d.dt!==undefined)delStage(d.dt);
-  else if(d.ss!==undefined)editStage(d.ss,t);
+  
 });
 
 const line=(r,i)=>`${i+1}. ${r.spec.toUpperCase()} JUMLAH ${r.stg?r.stg[r.stg.length-1].jml:r.jml} ${r.sat} SUDAH DITERIMA GUDANG TGL ${isoRe.test(r.dtg||'')?ddmm(r.dtg):(r.dtg||'')} (SPK ${r.spk})`;
@@ -364,15 +375,7 @@ pk.querySelector('.pk-list').innerHTML=USERS.map((n,i)=>`<button class="pk-b" da
 function showMe(){const b=$('#me');b.hidden=!me;b.textContent=me?me+' · Log out':''}
 function openPick(){pkList();$('#pkmsg').textContent='';pk.hidden=false;document.body.style.overflow='hidden';const f=pk.querySelector('.pk-b');if(f)f.focus()}
 function closePick(){pk.hidden=true;document.body.style.overflow=panelOpen?'hidden':''}
-const API_URL='https://script.google.com/macros/s/AKfycbxOr5aD2Z_qKonHYax8YnHBg51x2OYCYQotZza-mkonxpFQfw3czKtNm9k_tQ8-DSst/exec';
-mcp={callTool:async(srv,tool,args)=>{
-  if(API_URL.indexOf('GANTI')>=0)throw{code:'no_api'};
-  let r;
-  try{const h=await fetch(API_URL,{method:'POST',body:JSON.stringify({tool,args})});r=await h.json()}catch(e){throw{code:'upstream_error'}}
-  if(!r||!r.ok)throw{code:(r&&r.code)||'upstream_error',message:r&&r.message};
-  return {payload:r.result};
-}};
-const mcpReady=Promise.resolve();
+const mcpReady=(window.claude&&claude.use?claude.use('mcp'):Promise.resolve(null)).then(m=>{mcp=m||null},()=>{mcp=null});
 const WT='WA_KIRIM',WSID=1859000002;let waSent=new Map(),waTab=false,panelOpen=false;
 function updWc(){const c=$('#wc');c.textContent=sel.size;c.hidden=!sel.size;$('#wm').setAttribute('aria-pressed',String(panelOpen));document.body.style.overflow=(panelOpen||!pk.hidden)?'hidden':''}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panelOpen&&pk.hidden){panelOpen=false;renderPanel()}});
@@ -463,6 +466,116 @@ function hideLdr(){clearInterval(ldT);const l=$('#ldr');if(!l)return;l.classList
   await refresh();hideLdr();
   lastRev=await getRev();setInterval(tick,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
 })();
+
+/* Daftar material: setiap tahap datang ditampilkan terpisah */
+let dmOpen=false,dmPem='',dmQ='',dmAsk=null,dmTab='in';
+function dmOk(r){return (!dmPem||r.pem===dmPem)&&dmQ.toLowerCase().split(/\s+/).filter(Boolean).every(t=>r.hay.includes(t))}
+let dmNew=new Map(),dmOut=new Map();
+try{JSON.parse(localStorage.getItem('dmNew')||'[]').forEach(a=>dmNew.set(a[0],a[1]))}catch(e){}
+try{JSON.parse(localStorage.getItem('dmOut')||'[]').forEach(a=>dmOut.set(a[0],a[1]))}catch(e){}
+function dmSave(){try{localStorage.setItem('dmNew',JSON.stringify([...dmNew]));localStorage.setItem('dmOut',JSON.stringify([...dmOut]))}catch(e){}updDc()}
+function updDc(){const c=$('#dc');if(!c)return;const n=dmEntries('in',true).length;c.textContent=n;c.hidden=!n}
+const dmKey=(id,s)=>id+'|'+(s.tgl||'')+'|'+s.jml;
+function dmStages(r){const a=vst(r).map(s=>({tgl:s.tgl||'',jml:s.jml,by:s.by||''}));if(r.stg&&r.base>0)a.unshift({tgl:'',jml:r.base,by:''});return a}
+function dmK(map,s){if(map.has(s))return s;const n=+s;return map.has(n)?n:null}
+function dmUsed(id,tgl,sj){let n=0;dmOut.forEach(v=>{if(v&&typeof v==='object'&&!Array.isArray(v)&&v.id===id&&v.tgl===tgl&&rnd(v.sj==null?v.jml:v.sj)===rnd(sj))n+=v.jml});return rnd(n)}
+function dmEntries(tab,all){
+  const res=[],seen=new Set();
+  (tab==='out'?dmOut:dmNew).forEach((v,k)=>{
+    if(typeof k==='number'){
+      const spec=tab==='out'?v[0]:v,r=R.get(k);
+      if(!r||r.jml===null||r.spec!==spec)return;
+      if(tab==='out'){res.push({key:k,r,tgl:r.dtg||'',jml:r.cur,out:v[1],whole:true});return}
+      dmStages(r).forEach(s=>{const key=dmKey(r.id,s),rem=rnd(s.jml-dmUsed(r.id,s.tgl,s.jml));if(rem<=1e-9||seen.has(key))return;seen.add(key);res.push({key,r,tgl:s.tgl,jml:rem,sj:s.jml,by:s.by})});
+      return;
+    }
+    const r=R.get(v.id);
+    if(!r||r.jml===null||r.spec!==v.spec)return;
+    if(tab==='out'){res.push({key:k,r,tgl:v.tgl,jml:v.jml,sj:v.sj==null?v.jml:v.sj,by:v.by,out:v.out});return}
+    if(!dmStages(r).some(s=>s.tgl===v.tgl&&s.jml===v.jml)||seen.has(k))return;
+    const rem=rnd(v.jml-dmUsed(v.id,v.tgl,v.jml));if(rem<=1e-9)return;
+    seen.add(k);res.push({key:k,r,tgl:v.tgl,jml:rem,sj:v.jml,by:v.by});
+  });
+  const first=new Map();res.forEach((e,i)=>{if(!first.has(e.r.id))first.set(e.r.id,i)});
+  res.sort((a,b)=>first.get(a.r.id)-first.get(b.r.id)||(a.tgl<b.tgl?-1:a.tgl>b.tgl?1:0));
+  return all?res:res.filter(e=>dmOk(e.r));
+}
+function dmKeluar(key,tgl,qty){
+  const e=dmEntries('in',true).find(x=>x.key===key);if(!e)return;
+  const q=rnd(qty==null?e.jml:qty);if(!(q>0)||q>e.jml+1e-9)return;
+  const sj=e.sj==null?e.jml:e.sj,ok=dmKey(e.r.id,{tgl:e.tgl,jml:sj})+'#'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+  dmOut.set(ok,{id:e.r.id,spec:e.r.spec,tgl:e.tgl,jml:Math.min(q,e.jml),sj,by:e.by||'',out:tgl||todayIso()});
+  dmAsk=null;dmSave();renderDm();
+}
+function dmBalik(s){
+  const k=dmK(dmOut,s);if(k===null)return;const v=dmOut.get(k);dmOut.delete(k);
+  if(typeof k==='number')dmNew.set(k,v[0]);else{const sj=v.sj==null?v.jml:v.sj,sk=dmKey(v.id,{tgl:v.tgl,jml:sj});if(!dmNew.has(sk))dmNew.set(sk,{id:v.id,spec:v.spec,tgl:v.tgl,jml:sj,by:v.by})}
+  dmSave();renderDm();
+}
+function dmAdd(id,tgl,jml){
+  const r=R.get(id);if(!r||r.jml===null)return;
+  const key=dmKey(id,{tgl,jml});dmOut.delete(key);dmNew.delete(key);[...dmOut.keys()].forEach(k=>{const v=dmOut.get(k);if(v&&typeof v==='object'&&!Array.isArray(v)&&v.id===id&&v.tgl===tgl&&rnd(v.sj==null?v.jml:v.sj)===rnd(jml))dmOut.delete(k)});
+  dmNew.set(key,{id,spec:r.spec,tgl,jml,by:me});dmSave();if(dmOpen)renderDm();
+}
+function dmDrop(id){
+  let ch=false;
+  [dmNew,dmOut].forEach(m=>[...m.keys()].forEach(k=>{const v=m.get(k);if(k===id||(v&&typeof v==='object'&&!Array.isArray(v)&&v.id===id)){m.delete(k);ch=true}}));
+  if(ch){dmSave();if(dmOpen)renderDm()}
+}
+const dmCnt=tab=>dmEntries(tab).length;
+const DMST={belum:'Belum datang',sebagian:'Datang sebagian',selesai:'Sudah lengkap'};
+function dmCard(e,i){
+  const r=e.r,o=e.out?e.out:null;
+  const sj=e.sj==null?e.jml:e.sj,part=sj-e.jml>1e-9,st=dmStages(r),ix=st.findIndex(s=>s.tgl===e.tgl&&s.jml===sj);
+  const tp=!e.whole&&st.length>1&&ix>=0?`<span class="b dmtp">Tahap ${ix+1} dari ${st.length}</span>`:'';
+  const sisa=r.st==='sebagian'&&r.sisa>0?`Sisa belum datang: ${esc(rnd(r.sisa))} ${esc(r.sat)}`:'';
+  const dari=r.qtyS?`Jumlah pesanan: ${esc(r.qtyS)} ${esc(r.sat)}`:'';
+  const kel=o?'':(part?`Datang ${esc(rnd(sj))}, sudah dikeluarkan ${esc(rnd(sj-e.jml))} ${esc(r.sat)}`:'');
+  return `<div class="dmc${o?' out':''}"><div class="dmh"><span class="dmnm">${i+1}. ${esc(r.spec)}</span></div>`+
+  `<div class="dmk"><div><small>${o?'Jumlah dikeluarkan':part?'Sisa di daftar':'Jumlah datang'}</small><strong>${esc(rnd(e.jml))} ${esc(r.sat)}</strong>${!o&&part?`<small style="margin-top:8px">Sudah dikeluarkan</small><strong>${esc(rnd(sj-e.jml))} ${esc(r.sat)}</strong>`:''}${o?`<small style="margin-top:8px">No. SPK</small><strong>${esc(r.spk)||'-'}</strong>`:''}</div><div><small>Tanggal datang</small><strong>${esc(fmtD(e.tgl))||'-'}</strong>${o?'':`<small style="margin-top:8px">No. SPK</small><strong>${esc(r.spk)||'-'}</strong>`}${o?`<small style="margin-top:8px">Tanggal dikeluarkan</small><strong>${esc(fmtD(o))}</strong>`:''}</div></div>`+
+  (o?`<div class="dmx">${tp}<span class="b ${r.st}">${DMST[r.st]}</span>${dari?`<span>${dari}</span>`:''}${sisa?`<span>${sisa}</span>`:''}</div>`:'')+
+  `<div class="dmb">${o?`<button class="sm" data-back="${esc(e.key)}">Kembalikan ke daftar</button>`:`<button class="sm primary" data-out="${esc(e.key)}">Keluarkan barang</button>`}</div></div>`;
+}
+function renderDm(){
+  const p=$('#dmp');updDc();$('#dm').setAttribute('aria-pressed',String(dmOpen));
+  document.body.style.overflow=(dmOpen||panelOpen||!pk.hidden)?'hidden':'';
+  if(!dmOpen){p.hidden=true;return}
+  p.hidden=false;
+  const names=[...new Set([...dmEntries('in',true),...dmEntries('out',true)].map(e=>e.r.pem).filter(Boolean))].sort();
+  const list=dmEntries(dmTab),g={};
+  list.forEach(e=>(g[e.r.pem||'Tanpa pemesan']=g[e.r.pem||'Tanpa pemesan']||[]).push(e));
+  let h=`<div class="ph"><b>${dmTab==='out'?'Barang dikeluarkan':'Daftar material'}</b><span>${list.length} barang</span><button class="sm" id="dmcl" style="margin-left:auto">Tutup</button></div>`;
+  h+=`<div class="dmf"><input id="dmq" type="search" placeholder="Cari barang, no. SPK, atau pengawas" value="${esc(dmQ)}" aria-label="Cari"></div>`;
+  h+=`<div class="dmf"><select id="dmsel" aria-label="Pemesan"><option value="">Semua pemesan</option>${names.map(n=>`<option${n===dmPem?' selected':''}>${esc(n)}</option>`).join('')}</select></div>`;
+  h+=`<div class="dmtabs"><button class="${dmTab==='in'?'on':''}" data-tab="in">Daftar material (${dmCnt('in')})</button><button class="${dmTab==='out'?'on':''}" data-tab="out">Barang dikeluarkan (${dmCnt('out')})</button></div>`;
+  if(!list.length)h+=(dmQ||dmPem)&&dmEntries(dmTab,true).length?'<div class="note">Tidak ada barang yang cocok dengan pencarian.</div>':dmTab==='out'?'<div class="note">Belum ada barang yang dikeluarkan.</div>':'<div class="note">Daftar masih kosong. Barang yang baru Anda input akan muncul di sini.</div>';
+  Object.entries(g).forEach(([pem,a])=>{
+    h+=`<div class="grp"><div class="gh"><h3>Pemesan: ${esc(pem)}</h3><span class="note">${a.length} barang</span></div>`+
+    a.map(dmCard).join('')+'</div>';
+  });
+  if(dmAsk!==null){const ae=dmEntries('in',true).find(x=>x.key===dmAsk);h+=`<div class="dmmod" id="dmmod" role="dialog" aria-modal="true" aria-labelledby="dmmt"><div class="dmbox"><h3 id="dmmt">Keluarkan barang</h3>${ae?`<div class="dmnm">${esc(ae.r.spec)}</div><div class="note">Jumlah ${esc(rnd(ae.jml))} ${esc(ae.r.sat)}${ae.tgl?', datang tgl '+esc(fmtD(ae.tgl)):''}</div>`:''}<label>Jumlah dikeluarkan (${esc(ae.r.sat)}, maks ${esc(rnd(ae.jml))})<input type="number" id="dmjl" min="0" max="${esc(ae.jml)}" step="any" inputmode="decimal" value="${esc(rnd(ae.jml))}"></label><label>Tanggal dikeluarkan (ketuk untuk memilih dari kalender)<input type="date" id="dmtg" value="${todayIso()}"></label><div class="note" id="dmte" style="color:var(--warn)"></div><div class="dmbb"><button class="sm primary" data-ok="${esc(dmAsk)}">Simpan</button><button class="sm" data-no="1">Batal</button></div></div></div>`}
+  p.innerHTML=h;
+  if(dmAsk!==null){const i=$('#dmjl')||$('#dmtg');if(i){i.focus();try{i.select()}catch(x){}}}
+}
+$('#dm').onclick=()=>{dmOpen=!dmOpen;renderDm()};
+$('#dmp').addEventListener('click',e=>{
+  const t=e.target;
+  if(t.id==='dmcl'){dmOpen=false;renderDm()}
+  else if(t.dataset.tab){dmTab=t.dataset.tab;dmAsk=null;renderDm()}
+  else if(t.dataset.out!==undefined){dmAsk=t.dataset.out;renderDm()}
+  else if(t.dataset.no){dmAsk=null;renderDm()}
+  else if(t.id==='dmmod'){dmAsk=null;renderDm()}
+  else if(t.dataset.ok!==undefined){const ae=dmEntries('in',true).find(x=>x.key===t.dataset.ok),qv=num2(($('#dmjl')||{}).value),mm=$('#dmte');
+    if(ae&&(qv===null||qv<=0)){if(mm)mm.textContent='Isi jumlah dikeluarkan lebih dari 0.';const j=$('#dmjl');if(j)j.focus();return}
+    if(ae&&qv>ae.jml+1e-9){if(mm)mm.textContent='Jumlah melebihi yang ada. Maksimal '+rnd(ae.jml)+' '+ae.r.sat+'.';const j=$('#dmjl');if(j)j.focus();return}
+    const v=($('#dmtg')||{}).value,iso=isoRe.test(v||'')?v:'';if(!iso){const m=$('#dmte');if(m)m.textContent='Pilih tanggal dulu dari kalender.';const i=$('#dmtg');if(i)i.focus();return}dmKeluar(t.dataset.ok,iso,qv)}
+  else if(t.dataset.back!==undefined)dmBalik(t.dataset.back)
+});
+$('#dmp').addEventListener('change',e=>{if(e.target.id==='dmsel'){dmPem=e.target.value;dmAsk=null;renderDm()}});
+$('#dmp').addEventListener('input',e=>{if(e.target.id==='dmq'){dmQ=e.target.value;dmAsk=null;renderDm();const q=$('#dmq');if(q){q.focus();const n=q.value.length;try{q.setSelectionRange(n,n)}catch(x){}}}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dmOpen&&pk.hidden){if(dmAsk!==null)dmAsk=null;else dmOpen=false;renderDm()}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target&&(e.target.id==='dmtg'||e.target.id==='dmjl')){const b=document.querySelector('#dmmod [data-ok]');if(b)b.click()}});
+
 </script>
 </body>
 </html>
