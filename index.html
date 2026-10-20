@@ -199,7 +199,7 @@ async function fetchAll(){
 async function refresh(){
   if(busy)return;busy=true;
   try{
-    rows=await fetchAll();R=new Map(rows.map(r=>[r.row,r]));await loadWa();
+    rows=await fetchAll();R=new Map(rows.map(r=>[r.row,r]));await loadWa();await dmSync(!dmLoaded);
     [...sel.keys()].forEach(k=>{const r=R.get(k);if(!r||r.jml===null){sel.delete(k)}});
     const names=[...new Set(rows.map(r=>r.pem).filter(Boolean))].sort(),cur=$('#pem').value;
     $('#pem').innerHTML='<option value="">Semua pemesan</option>'+names.map(n=>`<option>${esc(n)}</option>`).join('');
@@ -376,7 +376,7 @@ pk.querySelector('.pk-list').innerHTML=USERS.map((n,i)=>`<button class="pk-b" da
 function showMe(){const b=$('#me');b.hidden=!me;b.textContent=me?me+' · Log out':''}
 function openPick(){pkList();$('#pkmsg').textContent='';pk.hidden=false;document.body.style.overflow='hidden';const f=pk.querySelector('.pk-b');if(f)f.focus()}
 function closePick(){pk.hidden=true;document.body.style.overflow=panelOpen?'hidden':''}
-const APPS_URL='https://script.google.com/macros/s/AKfycbxOr5aD2Z_qKonHYax8YnHBg51x2OYCYQotZza-mkonxpFQfw3czKtNm9k_tQ8-DSst/exec';
+const APPS_URL='PASTE_ALAMAT_APPS_SCRIPT_DI_SINI';
 const hasApps=()=>/^https:\/\//.test(APPS_URL);
 function mkShim(){return{callTool:async(srv,name,args)=>{
   let r,j;
@@ -483,7 +483,48 @@ function dmOk(r){return (!dmPem||r.pem===dmPem)&&dmQ.toLowerCase().split(/\s+/).
 let dmNew=new Map(),dmOut=new Map();
 try{JSON.parse(localStorage.getItem('dmNew')||'[]').forEach(a=>dmNew.set(a[0],a[1]))}catch(e){}
 try{JSON.parse(localStorage.getItem('dmOut')||'[]').forEach(a=>dmOut.set(a[0],a[1]))}catch(e){}
-function dmSave(){try{localStorage.setItem('dmNew',JSON.stringify([...dmNew]));localStorage.setItem('dmOut',JSON.stringify([...dmOut]))}catch(e){}updDc()}
+/* Daftar material disimpan di Sheet DAFTAR_MATERIAL supaya sama untuk semua orang */
+const DT='DAFTAR_MATERIAL',DSID=1859000003;
+let dmSnap=new Map(),dmBusy=false,dmDirty=false,dmLoaded=false,dmMsgOn=false;
+const dmSig=(t,k)=>t+'|'+JSON.stringify(k);
+function dmCur(){const m=new Map();dmNew.forEach((v,k)=>m.set(dmSig('N',k),[k,v,'N']));dmOut.forEach((v,k)=>m.set(dmSig('O',k),[k,v,'O']));return m}
+function dmCache(){try{localStorage.setItem('dmNew',JSON.stringify([...dmNew]));localStorage.setItem('dmOut',JSON.stringify([...dmOut]))}catch(e){}}
+function dmPending(){const c=dmCur();for(const[s,x]of c)if(dmSnap.get(s)!==JSON.stringify(x[1]))return true;for(const s of dmSnap.keys())if(!c.has(s))return true;return false}
+function dmErr(e){const m=$('#msg');if(!m)return;if(e){m.textContent='Daftar material belum tersimpan di Sheet: '+errMsg(e);dmMsgOn=true}else if(dmMsgOn){m.textContent='';dmMsgOn=false}}
+async function dmRead(){
+  let c;try{c=await mcp.callTool(SRV,'get_values',{spreadsheetId:SS,range:`${DT}!A1:C`},{cache:false})}catch(e){if(e&&e.code==='tool_error')return null;throw e}
+  const m=new Map();vals(c).forEach((v,i)=>{const t=v[0];if((t!=='N'&&t!=='O')||!v[1]||!v[2])return;try{m.set(t+'|'+v[1],{row:i+1,t,k:JSON.parse(v[1]),v:JSON.parse(v[2])})}catch(e){}});return m
+}
+async function dmEnsure(){
+  try{await mcp.callTool(SRV,'update_spreadsheet',{spreadsheetId:SS,requests:[{addSheet:{properties:{sheetId:DSID,title:DT}}}]},{cache:false})}catch(e){if(!e||e.code!=='tool_error')throw e}
+  await mcp.callTool(SRV,'update_spreadsheet',{spreadsheetId:SS,requests:[{updateCells:{range:{sheetId:DSID,startRowIndex:0,endRowIndex:1,startColumnIndex:0,endColumnIndex:3},rows:[{values:['JENIS','KUNCI','DATA'].map(x=>({userEnteredValue:{stringValue:x}}))}],fields:'userEnteredValue'}}]},{cache:false});
+}
+async function dmPush(){
+  let rm=await dmRead();if(rm===null){await dmEnsure();rm=new Map()}
+  const cur=dmCur(),reqs=[],app=[],str=s=>({userEnteredValue:{stringValue:s}}),rg=r=>({sheetId:DSID,startRowIndex:r-1,endRowIndex:r,startColumnIndex:0,endColumnIndex:3});
+  cur.forEach(([k,v,t],sig)=>{const raw=JSON.stringify(v);if(dmSnap.get(sig)===raw)return;const rw={values:[str(t),str(JSON.stringify(k)),str(raw)]},ex=rm.get(sig);
+    if(ex)reqs.push({updateCells:{range:rg(ex.row),rows:[rw],fields:'userEnteredValue'}});else app.push(rw)});
+  dmSnap.forEach((raw,sig)=>{if(cur.has(sig))return;const ex=rm.get(sig);if(ex)reqs.push({updateCells:{range:rg(ex.row),rows:[{values:[{},{},{}]}],fields:'userEnteredValue'}})});
+  if(app.length)reqs.push({appendCells:{sheetId:DSID,rows:app,fields:'userEnteredValue'}});
+  if(reqs.length){await mcp.callTool(SRV,'update_spreadsheet',{spreadsheetId:SS,requests:reqs},{cache:false});try{lastRev=await getRev()}catch(e){}}
+  dmSnap=new Map();cur.forEach(([k,v],sig)=>dmSnap.set(sig,JSON.stringify(v)));
+}
+function dmApply(rm){dmNew.clear();dmOut.clear();dmSnap=new Map();rm.forEach((x,s)=>{(x.t==='N'?dmNew:dmOut).set(x.k,x.v);dmSnap.set(s,JSON.stringify(x.v))});dmCache();updDc()}
+async function dmSync(first){
+  if(!mcp)return;
+  if(dmBusy){dmDirty=true;return}
+  dmBusy=true;
+  try{
+    let mig=false;try{mig=localStorage.getItem('dmMig')==='1'}catch(e){}
+    if(!(first&&mig)&&(first||dmPending())){await dmPush();try{localStorage.setItem('dmMig','1')}catch(e){}}
+    if(!dmDirty){const rm=await dmRead()||new Map();if(!dmDirty)dmApply(rm)}
+    dmLoaded=true;dmErr(null);
+  }catch(e){dmErr(e)}
+  finally{dmBusy=false}
+  if(dmDirty){dmDirty=false;dmSync(false)}
+  else if(dmOpen&&dmAsk===null&&!(document.activeElement&&document.activeElement.id==='dmq'))renderDm();
+}
+function dmSave(){dmCache();updDc();dmSync(false)}
 function updDc(){const c=$('#dc');if(!c)return;const n=dmEntries('in',true).length;c.textContent=n;c.hidden=!n}
 const dmKey=(id,s)=>id+'|'+(s.tgl||'')+'|'+s.jml;
 function dmStages(r){const a=vst(r).map(s=>({tgl:s.tgl||'',jml:s.jml,by:s.by||''}));if(r.stg&&r.base>0)a.unshift({tgl:'',jml:r.base,by:''});return a}
