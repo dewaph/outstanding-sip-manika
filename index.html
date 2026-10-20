@@ -183,6 +183,7 @@ function errMsg(e){
     case 'needs_reauth':return 'Sambungan Google Sheets perlu diautentikasi ulang di claude.ai (Pengaturan, Konektor).';
     case 'not_in_manifest':case 'approval_required':case 'consent_required':case 'not_granted':return 'Izin akses Google Sheets belum diberikan untuk halaman ini. Buka ulang halaman ini dan setujui permintaan izin.';
     case 'server_unavailable':case 'upstream_error':return 'Google Sheet sedang tidak bisa dihubungi. Periksa internet Anda lalu coba lagi.';
+    case 'network_error':case 'bad_response':return 'Tidak bisa menghubungi Apps Script. Periksa alamat Apps Script dan pastikan aksesnya diatur ke Siapa saja (Anyone).';
     case 'tool_error':return 'Sheet menolak permintaan: '+(e.message||'');
     case 'conflict':return 'Baris ini sudah diubah orang lain. Data dimuat ulang, silakan ulangi.';
     default:return 'Gagal berhubungan dengan Sheet ('+((e&&e.code)||'tidak diketahui')+').'
@@ -375,7 +376,16 @@ pk.querySelector('.pk-list').innerHTML=USERS.map((n,i)=>`<button class="pk-b" da
 function showMe(){const b=$('#me');b.hidden=!me;b.textContent=me?me+' · Log out':''}
 function openPick(){pkList();$('#pkmsg').textContent='';pk.hidden=false;document.body.style.overflow='hidden';const f=pk.querySelector('.pk-b');if(f)f.focus()}
 function closePick(){pk.hidden=true;document.body.style.overflow=panelOpen?'hidden':''}
-const mcpReady=(window.claude&&claude.use?claude.use('mcp'):Promise.resolve(null)).then(m=>{mcp=m||null},()=>{mcp=null});
+const APPS_URL='https://script.google.com/macros/s/AKfycbxOr5aD2Z_qKonHYax8YnHBg51x2OYCYQotZza-mkonxpFQfw3czKtNm9k_tQ8-DSst/exec';
+const hasApps=()=>/^https:\/\//.test(APPS_URL);
+function mkShim(){return{callTool:async(srv,name,args)=>{
+  let r,j;
+  try{r=await fetch(APPS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({name,args})})}catch(e){throw{code:'network_error'}}
+  try{j=await r.json()}catch(e){throw{code:'bad_response'}}
+  if(!j||j.ok!==true)throw{code:(j&&j.code)||'tool_error',message:j&&j.error};
+  return{payload:j.payload};
+}}}
+const mcpReady=(window.claude&&claude.use?claude.use('mcp'):Promise.resolve(null)).then(m=>{mcp=m||(hasApps()?mkShim():null)},()=>{mcp=hasApps()?mkShim():null});
 const WT='WA_KIRIM',WSID=1859000002;let waSent=new Map(),waTab=false,panelOpen=false;
 function updWc(){const c=$('#wc');c.textContent=sel.size;c.hidden=!sel.size;$('#wm').setAttribute('aria-pressed',String(panelOpen));document.body.style.overflow=(panelOpen||!pk.hidden)?'hidden':''}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panelOpen&&pk.hidden){panelOpen=false;renderPanel()}});
@@ -436,7 +446,7 @@ async function pkGo(){
       await savePin(n,await sha(n,p1));
     }
     me=n;try{localStorage.setItem('user2',me)}catch(x){}showMe();closePick();
-  }catch(x){m.textContent=x&&x.code==='no_mcp'?'Halaman ini harus dibuka lewat claude.ai dengan akun yang punya konektor Google Sheets.':errMsg(x)}
+  }catch(x){m.textContent=x&&x.code==='no_mcp'?'Alamat Apps Script (APPS_URL) belum diisi di halaman ini.':errMsg(x)}
   finally{btn.disabled=false}
 }
 $('#pkok').onclick=pkGo;
@@ -446,7 +456,7 @@ pk.addEventListener('click',async e=>{
   const b=e.target.closest('.pk-b');if(!b)return;
   b.disabled=true;$('#pkmsg').textContent='Memuat...';
   try{await loadPins();$('#pkmsg').textContent='';pkStep(b.dataset.u)}
-  catch(x){$('#pkmsg').textContent=x&&x.code==='no_mcp'?'Halaman ini harus dibuka lewat claude.ai dengan akun yang punya konektor Google Sheets.':errMsg(x)}
+  catch(x){$('#pkmsg').textContent=x&&x.code==='no_mcp'?'Alamat Apps Script (APPS_URL) belum diisi di halaman ini.':errMsg(x)}
   finally{b.disabled=false}
 });
 $('#me').onclick=()=>{me='';try{localStorage.removeItem('user2')}catch(x){}showMe();openPick()};
@@ -462,7 +472,7 @@ let ldI=0;const ldT=setInterval(()=>{const e=$('#lds');if(!e)return;ldI=Math.min
 function hideLdr(){clearInterval(ldT);const l=$('#ldr');if(!l)return;l.classList.add('done');setTimeout(()=>l.remove(),600);if(!me)openPick()}
 (async()=>{
   await mcpReady;
-  if(!mcp){hideLdr();$('#msg').textContent='Halaman ini harus dibuka lewat claude.ai dengan akun yang punya konektor Google Sheets agar bisa membaca Sheet.';$('#tb').innerHTML='';return}
+  if(!mcp){hideLdr();$('#msg').textContent='Alamat Apps Script (APPS_URL) belum diisi di halaman ini.';$('#tb').innerHTML='';return}
   await refresh();hideLdr();
   lastRev=await getRev();setInterval(tick,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
 })();
